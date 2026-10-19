@@ -19,5 +19,7 @@ staticfiles/
 # SQLite (optional to exclude, but good for local dev)
 # db.sqlite3
 
-# Temporary files
+# Temporary & Test files
 ~$*
+media/book_files/test_book*
+media/book_files/sample*
