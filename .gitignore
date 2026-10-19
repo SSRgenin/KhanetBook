@@ -18,3 +18,6 @@ staticfiles/
 
 # SQLite (optional to exclude, but good for local dev)
 # db.sqlite3
+
+# Temporary files
+~$*

@@ -148,6 +148,11 @@
                             </a>
                         </li>
                     {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link text-info" href="{% url 'api_docs' %}">
+                            <i class="bi bi-braces me-1"></i> Web API
+                        </a>
+                    </li>
                 </ul>
 
                 <!-- Right Side Navigation: Cart & User Account -->
@@ -249,6 +254,7 @@
                         <li class="mb-2"><a href="{% url 'book_list' %}"><i class="bi bi-chevron-right me-1"></i> หน้าแรกและค้นหาหนังสือ</a></li>
                         <li class="mb-2"><a href="{% url 'cart' %}"><i class="bi bi-chevron-right me-1"></i> ตะกร้าสินค้า</a></li>
                         <li class="mb-2"><a href="{% url 'my_library' %}"><i class="bi bi-chevron-right me-1"></i> คลังหนังสือที่ซื้อแล้ว</a></li>
+                        <li class="mb-2"><a href="{% url 'api_docs' %}" class="text-info"><i class="bi bi-chevron-right me-1"></i> ระบบเชื่อมต่อ Web API (JSON)</a></li>
                     </ul>
                 </div>
                 <div class="col-md-3">

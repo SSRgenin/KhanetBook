@@ -672,12 +672,13 @@ def build_full_report(output_path):
     add_section_heading(doc, "3.8 ความสามารถเพิ่มเติม (Bonus)")
     bonus_headers = ["เทคนิค", "การพัฒนาในระบบ"]
     bonus_data = [
+        ["RESTful JSON API", "ระบบ Web API ครบวงจร (/api/books/, /api/categories/, /api/cart/, /api/seller/dashboard/, /api/health/) พร้อมหน้าเอกสารทดสอบ API สด (/api/docs/) ตอบกลับ JSON มาตรฐาน"],
         ["Dark Mode Theme", "ออกแบบสไตล์ Dark Theme สมบูรณ์แบบ คอนทราสต์สูง (#0b0f19, #151c2c, ตัวหนังสือขาว #ffffff, ราคาฟ้าสดใส #38bdf8) สบายตาและสวยงาม"],
         ["Seller Sales Dashboard", "หน้า /seller/dashboard/ คำนวณสรุปยอดขายรวม (Sum), จำนวนเล่มที่ขายได้ (Count) และรายชื่อหนังสือในคลังของผู้ขาย"],
         ["Digital Rights File Guard", "ระบบป้องกันดาวน์โหลดไฟล์ตรง ตรวจสอบสิทธิ์การชำระเงินจริงในตาราง OrderItem ก่อนส่งไฟล์ผ่าน FileResponse"],
         ["Sample Preview System", "ระบบเปิดไฟล์ตัวอย่างอ่านฟรี (Sample PDF) ให้ลูกค้าตัดสินใจก่อนซื้อ โดยเปิดแท็บใหม่บนเบราว์เซอร์ได้ทันที"],
         ["Context Processor Cart", "ระบบคำนวณจำนวนหนังสือในตะกร้าและส่งให้ทุกเทมเพลตอัตโนมัติ เพื่อแสดง Badge ตัวเลขบนแถบนำทาง Navbar"],
-        ["Automated Testing", "ชุดทดสอบอัตโนมัติ 4 การทดสอบใน books/tests.py ครอบคลุม Catalog, RBAC, Validation, Flow"]
+        ["Automated Testing", "ชุดทดสอบอัตโนมัติ 11 การทดสอบใน books/tests.py และ api/tests.py ครอบคลุมทั้งระบบและ API"]
     ]
     add_academic_table(doc, bonus_headers, bonus_data, col_widths=[2.0, 4.5])
 
@@ -737,8 +738,8 @@ def build_full_report(output_path):
 
     add_section_heading(doc, "5.1 การทดสอบอัตโนมัติ (Automated Testing)")
     add_body_p(doc,
-        "ชุดทดสอบอัตโนมัติพัฒนาใน books/tests.py โดยรันด้วยคำสั่ง `python manage.py test` "
-        "ประกอบด้วย 4 กรณีทดสอบสำคัญ ซึ่งผ่านการทดสอบทั้งหมด (OK) ดังนี้"
+        "ชุดทดสอบอัตโนมัติพัฒนาใน books/tests.py และ api/tests.py โดยรันด้วยคำสั่ง `python manage.py test` "
+        "ประกอบด้วย 11 กรณีทดสอบสำคัญ ครอบคลุมการทำงานของระบบหลักและ Web API ซึ่งผ่านการทดสอบทั้งหมด (OK) ดังนี้"
     )
 
     test_headers = ["ชุดทดสอบ", "กรณีทดสอบ"]
@@ -746,11 +747,18 @@ def build_full_report(output_path):
         ["test_book_list_and_search", "ทดสอบการแสดงผลหน้าร้านหนังสือ ตรวจสอบระบบค้นหาด้วยคำค้น และการแสดงผลกรณีไม่พบหนังสือ"],
         ["test_rbac_access_control", "ทดสอบการควบคุมสิทธิ์ Customer ไม่สามารถเข้าหน้าลงขายหนังสือได้ (ถูก Redirect 302) แต่ Seller เข้าถึงได้ (HTTP 200)"],
         ["test_form_validation_negative_price", "ทดสอบ Form Validation เมื่อป้อนราคาหนังสือติดลบ (-50.00 บาท) ฟอร์มปฏิเสธและแจ้งเตือนข้อผิดพลาด"],
-        ["test_cart_and_checkout_flow", "ทดสอบขั้นตอนสั่งซื้อตั้งแต่เพิ่มลงตะกร้า ทำการ Checkout สร้าง Order/OrderItem และหนังสือต้องเข้า My Library"]
+        ["test_cart_and_checkout_flow", "ทดสอบขั้นตอนสั่งซื้อตั้งแต่เพิ่มลงตะกร้า ทำการ Checkout สร้าง Order/OrderItem และหนังสือต้องเข้า My Library"],
+        ["test_api_docs_html_and_json", "ทดสอบ Web API Docs แสดงผล HTML แบบอินเตอร์แอคทีฟ และส่งออกสเปก JSON ได้ถูกต้อง"],
+        ["test_books_api_list_and_search", "ทดสอบ /api/books/ ส่งข้อมูล JSON รายการหนังสือ, Pagination และค้นหาแบบ Real-time"],
+        ["test_book_detail_api", "ทดสอบ /api/books/<id>/ ส่งคืนรายละเอียดหนังสือเล่มเดี่ยว และคืนค่า 404 เมื่อไม่พบ"],
+        ["test_category_api", "ทดสอบ /api/categories/ ส่งรายการหมวดหมู่และจำนวนหนังสือในแต่ละหมวด"],
+        ["test_cart_api_operations", "ทดสอบ /api/cart/ และการเพิ่ม/ลบหนังสือในตะกร้าผ่าน API"],
+        ["test_seller_dashboard_api_security", "ทดสอบการป้องกันสิทธิ์บน /api/seller/dashboard/ ไม่อนุญาตบุคคลภายนอก (401) และลูกค้า (403)"],
+        ["test_health_api", "ทดสอบ /api/health/ ตรวจสอบความสมบูรณ์ของระบบและฐานข้อมูล"]
     ]
     add_academic_table(doc, test_headers, test_data, col_widths=[2.3, 4.2])
 
-    add_screenshot_placeholder(doc, "[แทรกภาพ: ผลการรัน python manage.py test (Ran 4 tests in 5.4s ... OK)]", "ภาพที่ 5.1 ผลการรันชุดทดสอบอัตโนมัติ")
+    add_screenshot_placeholder(doc, "[แทรกภาพ: ผลการรัน python manage.py test (Ran 11 tests in 6.6s ... OK)]", "ภาพที่ 5.1 ผลการรันชุดทดสอบอัตโนมัติ 11 รายการ")
 
     add_section_heading(doc, "5.2 การทดสอบการทำงานด้วยมือ (Manual Test)")
     add_body_p(doc, "ผู้จัดทำได้ทดสอบการทำงานบนระบบจริงครบทุกฟังก์ชัน และบันทึกผลการทดสอบดังนี้")

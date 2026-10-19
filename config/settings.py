@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'books.apps.BooksConfig',
     'orders.apps.OrdersConfig',
+    'api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [
