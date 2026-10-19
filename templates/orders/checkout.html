@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}ชำระเงินและยืนยันการสั่งซื้อ{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <h3 class="fw-bold mb-4"><i class="bi bi-shield-check me-2 text-primary"></i> ชำระเงินและยืนยันการสั่งซื้อ</h3>
+
+        <div class="row g-4">
+            <!-- Left: Payment Form -->
+            <div class="col-md-7">
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3 border-bottom pb-2">เลือกช่องทางการชำระเงิน</h5>
+
+                        <form method="post" id="checkout-form">
+                            {% csrf_token %}
+
+                            <div class="mb-3">
+                                <div class="form-check p-3 border rounded-3 mb-2 bg-light">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="pay_promptpay" value="PromptPay QR Code" checked>
+                                    <label class="form-check-label fw-bold d-flex align-items-center gap-2" for="pay_promptpay">
+                                        <i class="bi bi-qr-code text-primary fs-5"></i> พร้อมเพย์ (PromptPay QR Code)
+                                    </label>
+                                    <small class="text-muted d-block ps-4">สแกนจ่ายทันที ปลอดภัย รวดเร็ว พร้อมรับสิทธิ์อ่านทันที</small>
+                                </div>
+
+                                <div class="form-check p-3 border rounded-3 mb-2">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="pay_card" value="Credit/Debit Card">
+                                    <label class="form-check-label fw-bold d-flex align-items-center gap-2" for="pay_card">
+                                        <i class="bi bi-credit-card text-success fs-5"></i> บัตรเครดิต / เดบิต (Visa, Mastercard)
+                                    </label>
+                                    <small class="text-muted d-block ps-4">ชำระผ่านระบบบัตรเดบิตหรือเครดิตออนไลน์</small>
+                                </div>
+
+                                <div class="form-check p-3 border rounded-3">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="pay_free" value="สิทธิ์ฟรี / โปรโมชัน">
+                                    <label class="form-check-label fw-bold d-flex align-items-center gap-2" for="pay_free">
+                                        <i class="bi bi-gift text-warning fs-5"></i> ชำระด้วยยอดดาวน์โหลดฟรี (ถ้ามี)
+                                    </label>
+                                    <small class="text-muted d-block ps-4">กรณีเลือกหนังสือฟรี ยอดชำระจะเป็น 0 บาท</small>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold small">หมายเหตุคำสั่งซื้อ (ถ้ามี)</label>
+                                <textarea name="notes" class="form-control" rows="2" placeholder="ระบุข้อความเพิ่มเติมหรือหมายเหตุ..."></textarea>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-success btn-lg fw-bold shadow-sm">
+                                    <i class="bi bi-lock-fill me-1"></i> ยืนยันการสั่งซื้อและชำระเงิน (฿{{ total_price|floatformat:2 }})
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Order Summary -->
+            <div class="col-md-5">
+                <div class="card border-0 shadow-sm rounded-4 bg-white">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3 border-bottom pb-2">สรุปรายการสั่งซื้อ</h5>
+
+                        <ul class="list-group list-group-flush mb-3">
+                            {% for book in books %}
+                                <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-0 fw-semibold text-truncate" style="max-width: 220px;">{{ book.title }}</h6>
+                                        <small class="text-muted">{{ book.author }}</small>
+                                    </div>
+                                    <span class="fw-bold text-primary">
+                                        {% if book.price == 0 %}ฟรี{% else %}฿{{ book.price|floatformat:2 }}{% endif %}
+                                    </span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+                        <div class="border-top pt-3">
+                            <div class="d-flex justify-content-between mb-2 small text-muted">
+                                <span>ยอดรวมค่าหนังสือ:</span>
+                                <span>฿{{ total_price|floatformat:2 }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3 small text-muted">
+                                <span>ค่าธรรมเนียมการจัดส่ง:</span>
+                                <span class="text-success fw-bold">ฟรี (ไฟล์ดิจิทัล)</span>
+                            </div>
+                            <div class="d-flex justify-content-between pt-2 border-top">
+                                <span class="fs-5 fw-bold">ยอดชำระสุทธิ:</span>
+                                <span class="fs-4 fw-bold text-primary">฿{{ total_price|floatformat:2 }}</span>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info py-2 small mt-3 mb-0">
+                            <i class="bi bi-info-circle me-1"></i> เมื่อชำระเงินสำเร็จ หนังสือจะถูกเพิ่มเข้าสู่ <strong>คลังหนังสือของฉัน</strong> ทันที
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

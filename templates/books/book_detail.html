@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ book.title }} - KhanetBook{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'book_list' %}">หน้าร้านหนังสือ</a></li>
+        {% if book.category %}
+            <li class="breadcrumb-item"><a href="{% url 'book_list' %}?category={{ book.category.slug }}">{{ book.category.name }}</a></li>
+        {% endif %}
+        <li class="breadcrumb-item active" aria-current="page">{{ book.title }}</li>
+    </ol>
+</nav>
+
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5">
+    <div class="card-body p-4 p-lg-5">
+        <div class="row g-5">
+            <!-- Left Column: Book Cover & Sample -->
+            <div class="col-md-5 col-lg-4">
+                <div class="text-center">
+                    <div class="rounded-4 p-3 mb-3 shadow-sm d-inline-block w-100" style="background-color: #0b0f19 !important; border: 1px solid #222f47 !important;">
+                        {% if book.cover_image %}
+                            <img src="{{ book.cover_image.url }}" alt="{{ book.title }}" class="img-fluid rounded-3 shadow" style="max-height: 420px; object-fit: contain;">
+                        {% else %}
+                            <div class="py-5 text-muted">
+                                <i class="bi bi-book fs-1 opacity-50"></i>
+                                <div class="mt-2" style="color: #94a3b8 !important;">ไม่มีรูปภาพหน้าปก</div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Sample File Reader / Download -->
+                    {% if book.sample_file %}
+                        <div class="d-grid mb-3">
+                            <a href="{{ book.sample_file.url }}" target="_blank" class="btn btn-outline-info">
+                                <i class="bi bi-file-earmark-text me-1"></i> ทดลองอ่านไฟล์ตัวอย่าง (Sample)
+                            </a>
+                        </div>
+                    {% endif %}
+
+                    <!-- Author / Admin Controls -->
+                    {% if user.is_authenticated %}
+                        {% if user.is_superuser or user == book.seller %}
+                            <div class="card border-warning bg-warning bg-opacity-10 p-3 rounded-3 mt-4 text-start">
+                                <h6 class="fw-bold text-warning small mb-2"><i class="bi bi-shield-check me-1"></i> เมนูจัดการของผู้ขาย / แอดมิน:</h6>
+                                <div class="d-flex gap-2">
+                                    <a href="{% url 'book_update' book.id %}" class="btn btn-sm btn-outline-warning text-light flex-fill">
+                                        <i class="bi bi-pencil me-1"></i> แก้ไข
+                                    </a>
+                                    <a href="{% url 'book_delete' book.id %}" class="btn btn-sm btn-outline-danger flex-fill">
+                                        <i class="bi bi-trash me-1"></i> ลบ
+                                    </a>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Right Column: Details & Actions -->
+            <div class="col-md-7 col-lg-8">
+                <div class="d-flex flex-wrap gap-2 mb-2">
+                    <span class="badge border px-3 py-2" style="background-color: rgba(99, 102, 241, 0.2) !important; color: #818cf8 !important; border-color: #6366f1 !important;">
+                        <i class="bi bi-folder2 me-1"></i> {{ book.category.name|default:"ทั่วไป" }}
+                    </span>
+                    <span class="badge border px-3 py-2" style="background-color: #1e293b !important; color: #e2e8f0 !important; border-color: #334155 !important;">
+                        <i class="bi bi-filetype-pdf me-1"></i> ไฟล์ดิจิทัล (PDF/EPUB)
+                    </span>
+                </div>
+
+                <h1 class="fw-bold mb-2" style="color: #ffffff !important;">{{ book.title }}</h1>
+                <p class="fs-5 mb-3" style="color: #94a3b8 !important;">
+                    ผู้แต่ง: <span class="fw-semibold" style="color: #ffffff !important;">{{ book.author }}</span>
+                </p>
+
+                <!-- Price Box -->
+                <div class="p-3 rounded-3 mb-4 d-flex align-items-center justify-content-between" style="background-color: #0f172a !important; border: 1px solid #222f47 !important;">
+                    <div>
+                        <span class="small d-block" style="color: #94a3b8 !important;">ราคาจำหน่าย:</span>
+                        <div class="display-6 fw-bold">
+                            {% if book.price == 0 %}
+                                <span class="text-success" style="color: #22c55e !important;">ฟรี (Free)</span>
+                            {% else %}
+                                <span style="color: #38bdf8 !important;">฿{{ book.price|floatformat:2 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Purchase Actions -->
+                    <div>
+                        {% if is_purchased %}
+                            <a href="{% url 'download_book' book.id %}" class="btn btn-success btn-lg px-4 shadow-sm">
+                                <i class="bi bi-cloud-arrow-down-fill me-1"></i> ดาวน์โหลด E-Book ของคุณ
+                            </a>
+                        {% else %}
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'add_to_cart' book.id %}" class="btn btn-primary btn-lg px-4 shadow-sm">
+                                    <i class="bi bi-cart-plus me-1"></i> ใส่ตะกร้า
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if is_purchased %}
+                    <div class="alert alert-success d-flex align-items-center gap-2 mb-4">
+                        <i class="bi bi-check-circle-fill fs-4"></i>
+                        <div>
+                            <strong>คุณสั่งซื้อหนังสือเล่มนี้เรียบร้อยแล้ว!</strong> สามารถคลิกปุ่มดาวน์โหลดไฟล์ E-Book หรือเข้าไปดูได้ทุกเมื่อที่ <a href="{% url 'my_library' %}" class="alert-link">คลังหนังสือของฉัน</a>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Description -->
+                <h5 class="fw-bold border-bottom border-secondary pb-2 mb-3" style="color: #ffffff !important;">เรื่องย่อและรายละเอียดหนังสือ</h5>
+                <div class="lh-lg mb-4" style="white-space: pre-line; color: #cbd5e1 !important;">
+                    {{ book.description|default:"ไม่มีคำอธิบายเพิ่มเติม" }}
+                </div>
+
+                <!-- Metadata List -->
+                <div class="row row-cols-2 row-cols-sm-3 g-3 p-3 rounded-3 small" style="background-color: #0f172a !important; border: 1px solid #222f47 !important;">
+                    <div>
+                        <span class="d-block" style="color: #94a3b8 !important;">จำนวนหน้า:</span>
+                        <strong style="color: #f1f5f9 !important;">{{ book.pages }} หน้า</strong>
+                    </div>
+                    <div>
+                        <span class="d-block" style="color: #94a3b8 !important;">ISBN / รหัสหนังสือ:</span>
+                        <strong style="color: #f1f5f9 !important;">{{ book.isbn|default:"-" }}</strong>
+                    </div>
+                    <div>
+                        <span class="d-block" style="color: #94a3b8 !important;">ผู้จัดจำหน่าย:</span>
+                        <strong style="color: #f1f5f9 !important;">{{ book.seller.username }}</strong>
+                    </div>
+                    <div>
+                        <span class="d-block" style="color: #94a3b8 !important;">วันที่ลงขาย:</span>
+                        <strong style="color: #f1f5f9 !important;">{{ book.created_at|date:"d M Y" }}</strong>
+                    </div>
+                    <div>
+                        <span class="d-block" style="color: #94a3b8 !important;">การแก้ไขล่าสุด:</span>
+                        <strong style="color: #f1f5f9 !important;">{{ book.updated_at|date:"d M Y" }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Related Books Section -->
+{% if related_books %}
+    <div class="mb-5">
+        <h4 class="fw-bold mb-3"><i class="bi bi-collection me-2 text-primary"></i> หนังสืออื่นๆ ในหมวดหมู่นี้</h4>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+            {% for rel_book in related_books %}
+                <div class="col">
+                    <div class="book-card">
+                        <div class="book-cover-wrapper" style="height: 180px;">
+                            {% if rel_book.cover_image %}
+                                <img src="{{ rel_book.cover_image.url }}" alt="{{ rel_book.title }}" class="book-cover-img">
+                            {% else %}
+                                <i class="bi bi-book fs-2 text-secondary opacity-50"></i>
+                            {% endif %}
+                        </div>
+                        <div class="book-card-body p-3">
+                            <h6 class="fw-bold text-truncate mb-1">
+                                <a href="{{ rel_book.get_absolute_url }}" class="text-white text-decoration-none" style="color: #ffffff !important;">{{ rel_book.title }}</a>
+                            </h6>
+                            <p class="small text-muted mb-2">{{ rel_book.author }}</p>
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                <span class="fw-bold text-primary">฿{{ rel_book.price|floatformat:2 }}</span>
+                                <a href="{{ rel_book.get_absolute_url }}" class="btn btn-sm btn-outline-primary">ดูข้อมูล</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

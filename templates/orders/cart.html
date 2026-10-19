@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}ตะกร้าสินค้าของคุณ{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <h3 class="fw-bold mb-4"><i class="bi bi-bag-check me-2 text-primary"></i> ตะกร้าสินค้าของคุณ</h3>
+
+        {% if books %}
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead class="table-light small text-muted">
+                            <tr>
+                                <th scope="col" style="width: 80px;">รูปปก</th>
+                                <th scope="col">รายการหนังสือ</th>
+                                <th scope="col">หมวดหมู่</th>
+                                <th scope="col">ราคา</th>
+                                <th scope="col" class="text-end">ลบ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for book in books %}
+                                <tr>
+                                    <td>
+                                        {% if book.cover_image %}
+                                            <img src="{{ book.cover_image.url }}" alt="{{ book.title }}" class="rounded shadow-sm" style="width: 55px; height: 75px; object-fit: cover;">
+                                        {% else %}
+                                            <div class="bg-light rounded text-center text-muted" style="width: 55px; height: 75px; line-height: 75px;">
+                                                <i class="bi bi-book"></i>
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <h6 class="fw-bold mb-1">
+                                            <a href="{{ book.get_absolute_url }}" class="text-dark text-decoration-none">{{ book.title }}</a>
+                                        </h6>
+                                        <span class="small text-muted">{{ book.author }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-dark border">{{ book.category.name|default:"ทั่วไป" }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold text-primary">
+                                            {% if book.price == 0 %}ฟรี{% else %}฿{{ book.price|floatformat:2 }}{% endif %}
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        <a href="{% url 'remove_from_cart' book.id %}" class="btn btn-outline-danger btn-sm" title="นำออกจากตะกร้า">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer bg-light p-4 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+                    <div>
+                        <span class="text-muted">ยอดรวมทั้งหมด ({{ books|length }} รายการ):</span>
+                        <h4 class="fw-bold text-primary mb-0">฿{{ total_price|floatformat:2 }}</h4>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'book_list' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i> เลือกซื้อหนังสือเพิ่ม
+                        </a>
+                        <a href="{% url 'checkout' %}" class="btn btn-primary px-4 fw-semibold">
+                            <i class="bi bi-credit-card me-1"></i> ไปที่หน้าชำระเงิน
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="text-center py-5 bg-white rounded-4 border shadow-sm">
+                <i class="bi bi-bag-x fs-1 text-muted mb-3 d-block"></i>
+                <h4 class="fw-bold">ยังไม่มีสินค้าในตะกร้า</h4>
+                <p class="text-muted">สามารถเลือกดูหนังสือ E-Book หลากหลายหมวดหมู่ได้ที่หน้าร้าน</p>
+                <a href="{% url 'book_list' %}" class="btn btn-primary mt-2">
+                    <i class="bi bi-shop me-1"></i> ไปเลือกดูหนังสือ
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

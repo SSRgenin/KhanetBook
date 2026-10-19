@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}เข้าสู่ระบบ{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5 col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4 mt-3">
+            <div class="card-body p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex p-3 mb-3">
+                        <i class="bi bi-person-lock fs-2"></i>
+                    </div>
+                    <h3 class="fw-bold">เข้าสู่ระบบ</h3>
+                    <p class="text-muted small">ยินดีต้อนรับสู่ระบบร้านหนังสือออนไลน์ KhanetBook</p>
+                </div>
+
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger py-2 small">
+                            {% for error in form.non_field_errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">ชื่อผู้ใช้ (Username)</label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">รหัสผ่าน (Password)</label>
+                        {{ form.password }}
+                        {% if form.password.errors %}
+                            <div class="text-danger small mt-1">{{ form.password.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg fs-6">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> เข้าสู่ระบบ
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-4 pt-3 border-top">
+                    <p class="small text-muted mb-0">ยังไม่มีบัญชีผู้ใช้งาน? <a href="{% url 'register' %}" class="fw-semibold text-primary">สมัครสมาชิกที่นี่</a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Role Testing Quick Guide Box -->
+        <div class="card border-0 bg-light rounded-4 mt-3 p-3">
+            <h6 class="fw-bold small text-secondary mb-2"><i class="bi bi-info-circle me-1"></i> ข้อมูลสำหรับการทดสอบระบบ 2 บทบาท:</h6>
+            <ul class="small text-secondary mb-0 ps-3">
+                <li><strong>Customer (ผู้อ่าน):</strong> สมัครเลือกบทบาท "ลูกค้า" เพื่อทดสอบสั่งซื้อและดาวน์โหลด E-Book</li>
+                <li><strong>Seller (ผู้ขาย):</strong> สมัครเลือกบทบาท "ผู้ขาย" เพื่อทดสอบการเพิ่ม/แก้ไข/ลบหนังสือ (CRUD)</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

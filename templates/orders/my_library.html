@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}คลังหนังสือของฉัน (My Library){% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1"><i class="bi bi-collection-play text-primary me-2"></i> คลังหนังสือของฉัน (My Library)</h2>
+        <p class="text-muted small mb-0">หนังสือดิจิทัลทั้งหมดที่คุณสั่งซื้อแล้ว สามารถอ่านและดาวน์โหลดไฟล์ PDF/EPUB ได้ตลอดเวลา</p>
+    </div>
+    <div class="mt-3 mt-md-0">
+        <a href="{% url 'book_list' %}" class="btn btn-outline-primary">
+            <i class="bi bi-plus-circle me-1"></i> เลือกดูหนังสือเพิ่มเติม
+        </a>
+    </div>
+</div>
+
+{% if books %}
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 mb-5">
+        {% for book in books %}
+            <div class="col">
+                <div class="book-card">
+                    <!-- Book Cover -->
+                    <div class="book-cover-wrapper">
+                        {% if book.cover_image %}
+                            <img src="{{ book.cover_image.url }}" alt="{{ book.title }}" class="book-cover-img">
+                        {% else %}
+                            <div class="text-center text-muted p-4">
+                                <i class="bi bi-book fs-1 text-secondary opacity-50"></i>
+                                <div class="small mt-2">ไม่มีรูปหน้าปก</div>
+                            </div>
+                        {% endif %}
+                        <span class="badge bg-success position-absolute top-0 end-0 m-2">
+                            <i class="bi bi-check-circle-fill"></i> ซื้อแล้ว
+                        </span>
+                    </div>
+
+                    <!-- Book Information -->
+                    <div class="book-card-body">
+                        <span class="badge bg-light text-primary border small mb-2 w-auto align-self-start">{{ book.category.name|default:"ทั่วไป" }}</span>
+
+                        <h5 class="fw-bold mb-1 text-truncate" title="{{ book.title }}">
+                            <a href="{{ book.get_absolute_url }}" class="text-dark text-decoration-none">
+                                {{ book.title }}
+                            </a>
+                        </h5>
+                        <p class="small text-muted mb-3"><i class="bi bi-pen"></i> {{ book.author }} &bull; {{ book.pages }} หน้า</p>
+
+                        <div class="d-grid gap-2 mt-auto pt-2 border-top">
+                            <a href="{% url 'download_book' book.id %}" class="btn btn-success fw-bold">
+                                <i class="bi bi-cloud-arrow-down-fill me-1"></i> ดาวน์โหลด PDF
+                            </a>
+                            <a href="{{ book.get_absolute_url }}" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-info-circle me-1"></i> รายละเอียดหนังสือ
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="text-center py-5 bg-white rounded-4 border shadow-sm">
+        <i class="bi bi-journal-album fs-1 text-muted mb-3 d-block"></i>
+        <h4 class="fw-bold">ยังไม่มีหนังสือในคลังของคุณ</h4>
+        <p class="text-muted">เมื่อคุณทำการสั่งซื้อหนังสือ E-Book จากร้านค้า หนังสือจะเข้ามาอยู่ในคลังนี้ทันที</p>
+        <a href="{% url 'book_list' %}" class="btn btn-primary mt-2">
+            <i class="bi bi-shop me-1"></i> ไปที่หน้าร้านหนังสือ
+        </a>
+    </div>
+{% endif %}
+{% endblock %}

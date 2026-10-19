@@ -1,0 +1,20 @@
+# Python
+*.py[cod]
+__pycache__/
+*.so
+.Python
+
+# Virtual Environment
+env/
+venv/
+ENV/
+
+# Django
+staticfiles/
+*.log
+
+# Sensitive environment variables
+.env
+
+# SQLite (optional to exclude, but good for local dev)
+# db.sqlite3

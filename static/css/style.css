@@ -1,0 +1,248 @@
+@import url('https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+
+:root {
+    --primary-color: #6366f1;
+    --primary-hover: #4f46e5;
+    --accent-color: #38bdf8;
+    --dark-bg: #0b0f19;
+    --card-bg: #151c2c;
+    --card-border: #222f47;
+    --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    --card-hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.7), 0 0 15px rgba(99, 102, 241, 0.15);
+}
+
+body {
+    font-family: 'Prompt', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--dark-bg);
+    color: #e2e8f0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1 0 auto;
+}
+
+/* Navbar */
+.navbar {
+    background: #111827 !important;
+    border-bottom: 1px solid #1f293d;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    color: #818cf8 !important;
+    font-size: 1.4rem;
+}
+
+.nav-link {
+    color: #cbd5e1 !important;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: #ffffff !important;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #ffffff;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+.btn-outline-primary {
+    color: #818cf8;
+    border-color: #6366f1;
+}
+
+.btn-outline-primary:hover {
+    background-color: #6366f1;
+    border-color: #6366f1;
+    color: #ffffff;
+}
+
+/* Cards & Book Cards */
+.card {
+    background-color: var(--card-bg);
+    border-color: var(--card-border);
+    color: #e2e8f0;
+}
+
+.book-card {
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    background: var(--card-bg);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--card-hover-shadow);
+    border-color: rgba(99, 102, 241, 0.4);
+}
+
+.book-cover-wrapper {
+    height: 270px;
+    background-color: #080c14;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.book-cover-img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+}
+
+.book-card:hover .book-cover-img {
+    transform: scale(1.04);
+}
+
+.book-card-body {
+    padding: 1.25rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.book-card h5,
+.book-card h5 a,
+.book-card h6,
+.book-card h6 a,
+.book-card-body h5,
+.book-card-body h5 a,
+.book-title {
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+
+.book-card h5 a:hover,
+.book-card h6 a:hover,
+.book-card-body h5 a:hover {
+    color: #38bdf8 !important;
+    text-decoration: underline !important;
+}
+
+.book-price {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--accent-color);
+}
+
+/* Hero Banner */
+.hero-banner {
+    background: linear-gradient(135deg, #1e1b4b 0%, #172033 60%, #0f172a 100%);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    color: white;
+    border-radius: 16px;
+    padding: 3rem 2rem;
+    margin-bottom: 2.5rem;
+    box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.2);
+}
+
+/* Forms & Inputs in Dark Mode */
+.form-control, .form-select {
+    background-color: #0f172a;
+    border-color: #27354f;
+    color: #f1f5f9;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: #111a2e;
+    border-color: #6366f1;
+    color: #ffffff;
+    box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25);
+}
+
+.form-control::placeholder {
+    color: #64748b;
+}
+
+.input-group-text {
+    background-color: #1a2333;
+    border-color: #27354f;
+    color: #94a3b8;
+}
+
+/* List Groups & Tables */
+.list-group-item {
+    background-color: var(--card-bg);
+    border-color: var(--card-border);
+    color: #e2e8f0;
+}
+
+.table {
+    color: #e2e8f0;
+    border-color: var(--card-border);
+}
+
+.table-light, .table thead.table-light {
+    background-color: #111827 !important;
+    color: #94a3b8 !important;
+}
+
+/* Footer */
+.footer {
+    background: #070a10;
+    border-top: 1px solid #1a2333;
+    color: #94a3b8;
+    margin-top: 3.5rem;
+    padding: 2.5rem 0 1.5rem 0;
+    flex-shrink: 0;
+}
+
+.footer a {
+    color: #94a3b8;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footer a:hover {
+    color: #818cf8;
+}
+
+/* Custom badges */
+.badge-role-seller {
+    background-color: #d97706;
+    color: #ffffff;
+}
+
+.badge-role-customer {
+    background-color: #059669;
+    color: #ffffff;
+}
+
+/* Force dark theme overrides on legacy light classes */
+.bg-light, .bg-white {
+    background-color: #0f172a !important;
+    color: #e2e8f0 !important;
+}
+
+.text-dark {
+    color: #ffffff !important;
+}
+
+.text-muted {
+    color: #94a3b8 !important;
+}
+

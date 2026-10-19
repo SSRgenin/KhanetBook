@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+
+{% block title %}KhanetBook - ร้านหนังสือออนไลน์ E-Book ชั้นนำ{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-banner shadow-sm">
+    <div class="row align-items-center">
+        <div class="col-lg-8">
+            <span class="badge bg-white text-primary mb-2 px-3 py-2 fw-semibold"><i class="bi bi-stars"></i> KhanetBook แพลตฟอร์มจำหน่ายหนังสือดิจิทัล</span>
+            <h1 class="display-5 fw-bold mb-3">คลังหนังสือ E-Book คุณภาพ เพื่อการเรียนรู้ไม่รู้จบ</h1>
+            <p class="lead mb-4 opacity-90">อ่านได้ทุกที่ ทุกเวลา บนทุกอุปกรณ์ ดาวน์โหลดไฟล์ทันทีหลังสั่งซื้อ สะดวก รวดเร็ว ปลอดภัย</p>
+            
+            <!-- Quick Search Bar -->
+            <form method="get" action="{% url 'book_list' %}" class="row g-2">
+                {% if selected_category %}
+                    <input type="hidden" name="category" value="{{ selected_category.slug }}">
+                {% endif %}
+                <div class="col-sm-8 col-md-9">
+                    <div class="input-group input-group-lg shadow-sm">
+                        <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-search"></i></span>
+                        <input type="text" name="q" class="form-control border-secondary bg-dark text-white" placeholder="ค้นหาชื่อหนังสือ, ผู้แต่ง, หรือ ISBN..." value="{{ query }}">
+                    </div>
+                </div>
+                <div class="col-sm-4 col-md-3 d-grid">
+                    <button type="submit" class="btn btn-warning btn-lg fw-bold text-dark">
+                        <i class="bi bi-search me-1"></i> ค้นหา
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="col-lg-4 d-none d-lg-block text-center">
+            <i class="bi bi-tablet fs-1 text-primary opacity-50" style="font-size: 11rem !important;"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Category Filter Pills & Sort Bar -->
+<div class="row mb-4 align-items-center">
+    <div class="col-md-8">
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <span class="text-muted small fw-semibold me-1"><i class="bi bi-funnel"></i> หมวดหมู่:</span>
+            <a href="{% url 'book_list' %}{% if query %}?q={{ query }}{% endif %}" 
+               class="btn btn-sm {% if not selected_category %}btn-primary{% else %}btn-outline-secondary text-light{% endif %} rounded-pill">
+                ทั้งหมด
+            </a>
+            {% for cat in categories %}
+                <a href="{% url 'book_list' %}?category={{ cat.slug }}{% if query %}&q={{ query }}{% endif %}{% if sort_option %}&sort={{ sort_option }}{% endif %}" 
+                   class="btn btn-sm {% if selected_category and selected_category.id == cat.id %}btn-primary{% else %}btn-outline-secondary text-light{% endif %} rounded-pill">
+                    {{ cat.name }} ({{ cat.book_count }})
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-md-4 mt-3 mt-md-0">
+        <form method="get" class="d-flex align-items-center justify-content-md-end gap-2">
+            {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
+            {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category.slug }}">{% endif %}
+            <label class="form-label small text-muted text-nowrap mb-0">เรียงตาม:</label>
+            <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()" style="width: auto;">
+                <option value="newest" {% if sort_option == 'newest' %}selected{% endif %}>ใหม่ล่าสุด</option>
+                <option value="price_asc" {% if sort_option == 'price_asc' %}selected{% endif %}>ราคา: ต่ำไปสูง</option>
+                <option value="price_desc" {% if sort_option == 'price_desc' %}selected{% endif %}>ราคา: สูงไปต่ำ</option>
+                <option value="title_asc" {% if sort_option == 'title_asc' %}selected{% endif %}>ชื่อ ก-ฮ (A-Z)</option>
+            </select>
+        </form>
+    </div>
+</div>
+
+<!-- Search / Filter Status -->
+{% if query or selected_category %}
+    <div class="alert alert-dark border border-secondary d-flex justify-content-between align-items-center py-2 mb-4">
+        <div>
+            <i class="bi bi-info-circle text-primary me-1"></i>
+            ผลการค้นหา: พบ <strong>{{ total_count }}</strong> รายการ
+            {% if query %} สำหรับคำค้นหา <em>"{{ query }}"</em>{% endif %}
+            {% if selected_category %} ในหมวดหมู่ <em>"{{ selected_category.name }}"</em>{% endif %}
+        </div>
+        <a href="{% url 'book_list' %}" class="btn btn-sm btn-outline-danger">ล้างตัวกรอง</a>
+    </div>
+{% endif %}
+
+<!-- Book Cards Grid -->
+{% if page_obj %}
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 mb-5">
+        {% for book in page_obj %}
+            <div class="col">
+                <div class="book-card">
+                    <!-- Book Cover -->
+                    <div class="book-cover-wrapper">
+                        {% if book.cover_image %}
+                            <img src="{{ book.cover_image.url }}" alt="{{ book.title }}" class="book-cover-img">
+                        {% else %}
+                            <div class="text-center text-muted p-4">
+                                <i class="bi bi-book fs-1 text-secondary opacity-50"></i>
+                                <div class="small mt-2">ไม่มีรูปหน้าปก</div>
+                            </div>
+                        {% endif %}
+                        <span class="badge bg-dark bg-opacity-75 position-absolute top-0 end-0 m-2 border border-secondary">
+                            <i class="bi bi-file-earmark-pdf"></i> E-Book
+                        </span>
+                    </div>
+
+                    <!-- Book Information -->
+                    <div class="book-card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge bg-dark text-info border border-secondary small">{{ book.category.name|default:"ทั่วไป" }}</span>
+                            <span class="small text-muted"><i class="bi bi-file-text"></i> {{ book.pages }} หน้า</span>
+                        </div>
+
+                        <h5 class="fw-bold mb-1 text-truncate" title="{{ book.title }}">
+                            <a href="{{ book.get_absolute_url }}" class="text-white text-decoration-none" style="color: #ffffff !important;">
+                                {{ book.title }}
+                            </a>
+                        </h5>
+                        <p class="small text-muted mb-2"><i class="bi bi-pen"></i> {{ book.author }}</p>
+
+                        <p class="small text-secondary mb-3 flex-grow-1" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                            {{ book.description|default:"ไม่มีคำอธิบาย" }}
+                        </p>
+
+                        <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary mt-auto">
+                            <div class="book-price">
+                                {% if book.price == 0 %}
+                                    <span class="text-success">ฟรี</span>
+                                {% else %}
+                                    ฿{{ book.price|floatformat:2 }}
+                                {% endif %}
+                            </div>
+
+                            <div class="d-flex gap-1">
+                                <a href="{{ book.get_absolute_url }}" class="btn btn-sm btn-outline-secondary" title="ดูรายละเอียด">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{% url 'add_to_cart' book.id %}" class="btn btn-sm btn-primary" title="ใส่ตะกร้า">
+                                    <i class="bi bi-cart-plus me-1"></i> ใส่ตะกร้า
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.paginator.num_pages > 1 %}
+        <nav aria-label="Book pagination" class="my-4">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if sort_option %}&sort={{ sort_option }}{% endif %}" aria-label="First">
+                            &laquo; หน้าแรก
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if sort_option %}&sort={{ sort_option }}{% endif %}">
+                            ก่อนหน้า
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">&laquo; หน้าแรก</span></li>
+                    <li class="page-item disabled"><span class="page-link">ก่อนหน้า</span></li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if sort_option %}&sort={{ sort_option }}{% endif %}">
+                                {{ num }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if sort_option %}&sort={{ sort_option }}{% endif %}">
+                            ถัดไป
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if sort_option %}&sort={{ sort_option }}{% endif %}" aria-label="Last">
+                            หน้าสุดท้าย &raquo;
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">ถัดไป</span></li>
+                    <li class="page-item disabled"><span class="page-link">หน้าสุดท้าย &raquo;</span></li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+
+{% else %}
+    <div class="text-center py-5 bg-dark rounded-4 border border-secondary shadow-sm my-4">
+        <i class="bi bi-journal-x fs-1 text-muted mb-3 d-block"></i>
+        <h4 class="fw-bold">ไม่พบหนังสือที่ตรงกับเงื่อนไขการค้นหา</h4>
+        <p class="text-muted">ลองค้นหาด้วยคำอื่น หรือเลือกหมวดหมู่อื่นดูสิครับ</p>
+        <a href="{% url 'book_list' %}" class="btn btn-outline-primary mt-2">
+            <i class="bi bi-arrow-counterclockwise me-1"></i> ดูหนังสือทั้งหมด
+        </a>
+    </div>
+{% endif %}
+{% endblock %}

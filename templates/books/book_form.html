@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ action_title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h3 class="fw-bold mb-0"><i class="bi bi-journal-plus me-2 text-primary"></i> {{ action_title }}</h3>
+            <a href="{% if book %}{{ book.get_absolute_url }}{% else %}{% url 'seller_dashboard' %}{% endif %}" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-arrow-left me-1"></i> ย้อนกลับ
+            </a>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4 mb-5">
+            <div class="card-body p-4 p-md-5">
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger py-2">
+                            {% for error in form.non_field_errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <!-- Basic Info -->
+                    <h5 class="fw-bold text-primary border-bottom pb-2 mb-3">1. ข้อมูลทั่วไปของหนังสือ</h5>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">ชื่อหนังสือ E-Book <span class="text-danger">*</span></label>
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                            <div class="text-danger small mt-1">{{ form.title.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small">ผู้แต่ง / สำนักพิมพ์ <span class="text-danger">*</span></label>
+                            {{ form.author }}
+                            {% if form.author.errors %}
+                                <div class="text-danger small mt-1">{{ form.author.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small">หมวดหมู่หนังสือ <span class="text-danger">*</span></label>
+                            {{ form.category }}
+                            {% if form.category.errors %}
+                                <div class="text-danger small mt-1">{{ form.category.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold small">ราคาจำหน่าย (บาท) <span class="text-danger">*</span></label>
+                            {{ form.price }}
+                            <div class="form-text small">กรอก 0 สำหรับแจกฟรี (ห้ามติดลบ)</div>
+                            {% if form.price.errors %}
+                                <div class="text-danger small mt-1">{{ form.price.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold small">จำนวนหน้า (Pages) <span class="text-danger">*</span></label>
+                            {{ form.pages }}
+                            {% if form.pages.errors %}
+                                <div class="text-danger small mt-1">{{ form.pages.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold small">รหัส ISBN (ถ้ามี)</label>
+                            {{ form.isbn }}
+                            {% if form.isbn.errors %}
+                                <div class="text-danger small mt-1">{{ form.isbn.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold small">คำอธิบายย่อ / สารบัญ <span class="text-danger">*</span></label>
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                            <div class="text-danger small mt-1">{{ form.description.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Uploads -->
+                    <h5 class="fw-bold text-primary border-bottom pb-2 mb-3">2. อัปโหลดรูปภาพและไฟล์ E-Book</h5>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">ภาพหน้าปกหนังสือ (Cover Image)</label>
+                        {{ form.cover_image }}
+                        <div class="form-text small">รองรับไฟล์: .jpg, .jpeg, .png, .webp (ขนาดไม่เกิน 5MB)</div>
+                        {% if book and book.cover_image %}
+                            <div class="mt-2 small text-muted">
+                                หน้าปกปัจจุบัน: <a href="{{ book.cover_image.url }}" target="_blank">{{ book.cover_image.name }}</a>
+                            </div>
+                        {% endif %}
+                        {% if form.cover_image.errors %}
+                            <div class="text-danger small mt-1">{{ form.cover_image.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">ไฟล์หนังสือฉบับเต็ม (PDF / EPUB) <span class="text-danger">*</span></label>
+                        {{ form.pdf_file }}
+                        <div class="form-text small">รองรับไฟล์: .pdf หรือ .epub (เฉพาะผู้ที่สั่งซื้อแล้วเท่านั้นจึงจะดาวน์โหลดได้)</div>
+                        {% if book and book.pdf_file %}
+                            <div class="mt-2 small text-muted">
+                                ไฟล์ปัจจุบัน: <a href="{{ book.pdf_file.url }}" target="_blank">{{ book.pdf_file.name }}</a>
+                            </div>
+                        {% endif %}
+                        {% if form.pdf_file.errors %}
+                            <div class="text-danger small mt-1">{{ form.pdf_file.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold small">ไฟล์ตัวอย่างทดลองอ่าน (Sample Preview - ตัวเลือกเสริม)</label>
+                        {{ form.sample_file }}
+                        <div class="form-text small">ให้ผู้เยี่ยมชมทั่วไปเปิดอ่านบางส่วนได้ฟรี</div>
+                        {% if form.sample_file.errors %}
+                            <div class="text-danger small mt-1">{{ form.sample_file.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-check form-switch mb-4">
+                        {{ form.is_active }}
+                        <label class="form-check-label fw-semibold small" for="{{ form.is_active.id_for_label }}">
+                            เปิดให้สั่งซื้อได้ทันที (พร้อมขาย)
+                        </label>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 border-top pt-3">
+                        <a href="{% if book %}{{ book.get_absolute_url }}{% else %}{% url 'seller_dashboard' %}{% endif %}" class="btn btn-outline-secondary px-4">
+                            ยกเลิก
+                        </a>
+                        <button type="submit" class="btn btn-primary px-4 fw-semibold">
+                            <i class="bi bi-save me-1"></i> {{ button_text }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

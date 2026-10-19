@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}รายละเอียดคำสั่งซื้อ #{{ order.id }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+            <div class="card-header bg-success text-white py-3 px-4 d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-check-circle-fill fs-4"></i>
+                    <div>
+                        <h5 class="fw-bold mb-0">คำสั่งซื้อสำเร็จ!</h5>
+                        <small class="opacity-75">รหัสคำสั่งซื้อ #{{ order.id }}</small>
+                    </div>
+                </div>
+                <span class="badge bg-white text-success fw-bold px-3 py-2">
+                    {{ order.get_status_display }}
+                </span>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+                <div class="row mb-4 small text-muted">
+                    <div class="col-sm-6 mb-2">
+                        <span class="d-block">ผู้สั่งซื้อ:</span>
+                        <strong class="text-dark">{{ order.user.get_full_name|default:order.user.username }}</strong> ({{ order.user.email }})
+                    </div>
+                    <div class="col-sm-6 mb-2">
+                        <span class="d-block">วันที่สั่งซื้อ:</span>
+                        <strong class="text-dark">{{ order.created_at|date:"d M Y เวลา H:i น." }}</strong>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="d-block">ช่องทางการชำระเงิน:</span>
+                        <strong class="text-dark">{{ order.payment_method }}</strong>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="d-block">สถานะสิทธิ์หนังสือ:</span>
+                        <strong class="text-success"><i class="bi bi-unlock-fill me-1"></i> ปลดล็อกและพร้อมดาวน์โหลด</strong>
+                    </div>
+                </div>
+
+                <h5 class="fw-bold border-bottom pb-2 mb-3">รายการหนังสือในคำสั่งซื้อนี้</h5>
+
+                <div class="list-group mb-4">
+                    {% for item in order.items.all %}
+                        <div class="list-group-item p-3 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+                            <div class="d-flex align-items-center gap-3">
+                                {% if item.book.cover_image %}
+                                    <img src="{{ item.book.cover_image.url }}" alt="{{ item.book.title }}" class="rounded shadow-sm" style="width: 50px; height: 65px; object-fit: cover;">
+                                {% else %}
+                                    <div class="bg-light rounded text-center text-muted" style="width: 50px; height: 65px; line-height: 65px;">
+                                        <i class="bi bi-book"></i>
+                                    </div>
+                                {% endif %}
+                                <div>
+                                    <h6 class="fw-bold mb-1">
+                                        <a href="{{ item.book.get_absolute_url }}" class="text-dark text-decoration-none">
+                                            {{ item.book.title }}
+                                        </a>
+                                    </h6>
+                                    <small class="text-muted">{{ item.book.author }} &bull; {{ item.book.pages }} หน้า</small>
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="fw-bold text-primary">฿{{ item.price|floatformat:2 }}</span>
+                                <a href="{% url 'download_book' item.book.id %}" class="btn btn-outline-success btn-sm text-nowrap">
+                                    <i class="bi bi-cloud-arrow-down-fill me-1"></i> ดาวน์โหลด PDF
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="p-3 bg-light rounded-3 d-flex justify-content-between align-items-center mb-4">
+                    <span class="fw-bold">ยอดเงินที่ชำระทั้งหมด:</span>
+                    <span class="fs-4 fw-bold text-primary">฿{{ order.total_price|floatformat:2 }}</span>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'order_history' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-clock-history me-1"></i> ดูประวัติคำสั่งซื้อ
+                    </a>
+                    <a href="{% url 'my_library' %}" class="btn btn-primary">
+                        <i class="bi bi-collection-play me-1"></i> ไปยังคลังหนังสือของฉัน
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
