@@ -27,7 +27,7 @@
 
 | บทบาท (Role) | Username | Password | สิทธิ์และหน้าที่ในระบบ |
 | :--- | :--- | :--- | :--- |
-| **Superuser / Admin** | `admin` | `admin1234` | สิทธิ์สูงสุด ดูแลจัดการระบบและเข้าหลังบ้าน Django Admin |
+| **Superuser / Admin** | `*****` | `*******` | สิทธิ์สูงสุด ดูแลจัดการระบบและเข้าหลังบ้าน Django Admin |
 | **Seller (ผู้ขาย/นักเขียน)** | `seller1` | `seller1234` | เพิ่ม/แก้ไข/ลบหนังสือ E-Book, ดูยอดขายใน Seller Dashboard |
 | **Customer (ลูกค้า/ผู้อ่าน)** | `reader1` | `reader1234` | สั่งซื้อหนังสือ, ดาวน์โหลดไฟล์ PDF ในคลังหนังสือของฉัน |
 
@@ -103,6 +103,8 @@ py manage.py runserver
  
  #   K h a n e t B o o k 
  
- #   K h a n e t B o o k  
- #   K h a n e t B o o k  
+ #   K h a n e t B o o k 
+ 
+ #   K h a n e t B o o k 
+ 
  
